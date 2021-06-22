@@ -1,0 +1,7 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "ConsumeServiceOA/lib/commons-sdk-6.0.5.jar",
+        "ConsumeServiceOA/lib/slf4j-api-1.7.10.jar"
+    ]
+}
