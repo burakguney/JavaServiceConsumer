@@ -20,8 +20,6 @@ public class App {
     private static final String AUTH_TYPE = "Basic";
     private static final String URL_PARAMETER = "";
 
-    //private static String RESULT = "result";
-    
     public static void main(String[] args) throws Exception {
 
         String userPass = USERNAME + ":" + PASSWORD;
@@ -60,11 +58,7 @@ public class App {
                 }
                 in.close();
 
-                //outputActionContext.getReturnMap().put(RESULT, response);
-
                 System.out.println(String.valueOf(response));
-
-                //System.out.println(outputActionContext.getReturnMap().get(RESULT).toString());
 
                 System.out.println("GET request SUCCESS");
 
@@ -103,7 +97,7 @@ public class App {
 
             if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_CREATED) {
 
-                /* BufferedReader in = new BufferedReader(new InputStreamReader(
+                BufferedReader in = new BufferedReader(new InputStreamReader(
                         connection.getInputStream()));
                 String inputLine;
                 StringBuilder response = new StringBuilder();
@@ -113,7 +107,7 @@ public class App {
                 }
                 in.close();
 
-                System.out.println(String.valueOf(response)); */
+                System.out.println(String.valueOf(response));
 
                 System.out.println("POST request SUCCESS.");
 
