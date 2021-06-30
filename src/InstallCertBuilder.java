@@ -12,9 +12,9 @@ import java.security.cert.X509Certificate;
 
 public class InstallCertBuilder {
 
-    public static void InstallCert(String baseUrl, int port) throws Exception {
+    public static void InstallCert(String certUrl, int port) throws Exception {
 
-        String host = baseUrl.substring(8);
+        String host = certUrl;
         char[] passphrase = null;
 
         if (port == -1) {

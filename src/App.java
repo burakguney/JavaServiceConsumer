@@ -1,5 +1,3 @@
-import java.io.OutputStream;
-
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
@@ -13,13 +11,14 @@ import java.util.Base64;
 public class App {
 
     private static final String BASE_URL = "https://self-signed.badssl.com";
+    private static final String CERT_URL = "self-signed.badssl.com";
+
     private static final int PORT = -1;
     private static final String USERNAME = "";
     private static final String PASSWORD = "";
     private static final String TOKEN = "";
     private static final String METHOD = "GET";
     private static final String AUTH_TYPE = "";
-    private static final String URL_PARAMETER = "";
 
     public static void main(String[] args) throws Exception {
 
@@ -31,11 +30,11 @@ public class App {
             }
         });
 
-        InstallCertBuilder.InstallCert(BASE_URL, PORT);
+        InstallCertBuilder.InstallCert(CERT_URL, PORT);
 
         if ("GET".equals(METHOD)) {
 
-            URL url = new URL(BASE_URL + ":" + PORT + URL_PARAMETER);
+            URL url = new URL(BASE_URL);
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
             connection.setSSLSocketFactory(SSLContextBuilder.loadSSLContext());
@@ -79,7 +78,7 @@ public class App {
             }
         } else if ("POST".equals(METHOD)) {
 
-            URL url = new URL(BASE_URL + ":" + PORT + URL_PARAMETER);
+            URL url = new URL(BASE_URL);
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
             connection.setSSLSocketFactory(SSLContextBuilder.loadSSLContext());
@@ -98,12 +97,6 @@ public class App {
             }
 
             connection.setRequestMethod(METHOD);
-
-            connection.setDoOutput(true);
-            OutputStream os = connection.getOutputStream();
-            os.write(URL_PARAMETER.getBytes());
-            os.flush();
-            os.close();
 
             int responseCode = connection.getResponseCode();
             System.out.println("POST Response Code :: " + responseCode);
