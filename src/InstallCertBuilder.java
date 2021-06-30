@@ -25,16 +25,22 @@ public class InstallCertBuilder {
             passphrase = "changeit".toCharArray();
         }
 
-        File file = new File("jssecacerts");
-        if (file.isFile() == false) {
-            file = new File("jssecacerts");
-        }
+        File file = new File("badssl.jks");
+        file.createNewFile();
 
         System.out.println("Loading KeyStore " + file + "...");
         InputStream in = new FileInputStream(file);
         KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-        ks.load(in, passphrase);
-        in.close();
+
+        try {
+
+            ks.load(in, passphrase);
+            in.close();
+
+        } catch (Exception e) {
+
+            ks.load(null, passphrase);
+        }
 
         SSLContext context = SSLContext.getInstance("TLS");
         TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
@@ -88,7 +94,7 @@ public class InstallCertBuilder {
             String alias = host + "-" + (k + 1);
             ks.setCertificateEntry(alias, cert);
 
-            OutputStream out = new FileOutputStream("jssecacerts");
+            OutputStream out = new FileOutputStream(file);
             ks.store(out, passphrase);
             out.close();
 
