@@ -1,7 +1,8 @@
 import java.io.OutputStream;
 
-//import java.net.HttpURLConnection;
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -11,43 +12,33 @@ import java.util.Base64;
 
 public class App {
 
-    // private static final String BASE_URL = "https://www.google.com/";
-    //private static final String BASE_URL = "https://localhost:8000/nbi/wdl/ata";
-    private static final String BASE_URL = "https://self-signed.badssl.com/";
-    //private static final String BASE_URL = "https://localhost:8000/nbi/device/5ef9a217291ff37768d49ab3/download/file/5ef9a217291ff37768d49ab3";
-    private static final String USERNAME = "evam";
-    private static final String PASSWORD = "evam";
+    private static final String BASE_URL = "https://self-signed.badssl.com";
+    private static final int PORT = -1;
+    private static final String USERNAME = "";
+    private static final String PASSWORD = "";
     private static final String TOKEN = "";
     private static final String METHOD = "GET";
-    private static final String AUTH_TYPE = "Basic";
+    private static final String AUTH_TYPE = "";
     private static final String URL_PARAMETER = "";
 
     public static void main(String[] args) throws Exception {
 
-        /* System.setProperty("javax.net.debug", "SSL");
-
-        System.setProperty("javax.net.ssl.trustStoreType", "JKS");
-        System.setProperty("javax.net.ssl.trustStore", "%JAVA_HOME%/jre/lib/security/cacerts");
-        System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
-
-        System.setProperty("javax.net.ssl.keyStoreType", "PKCS12");
-        System.setProperty("javax.net.ssl.keyStore", "/Users/Burak/Desktop/Badssl.cer");
-        System.setProperty("javax.net.ssl.keyStorePassword", "123456"); */
-
         String userPass = USERNAME + ":" + PASSWORD;
 
-        /* javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier(new javax.net.ssl.HostnameVerifier() {
-            public boolean verify(String hostname, javax.net.ssl.SSLSession sslSession) {
-                return hostname.equals("localhost");
+        HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+            public boolean verify(String s, SSLSession sslSession) {
+                return true;
             }
+        });
 
-        }); */
-
+        InstallCertBuilder.InstallCert(BASE_URL, PORT);
 
         if ("GET".equals(METHOD)) {
 
-            URL url = new URL(BASE_URL);
+            URL url = new URL(BASE_URL + ":" + PORT + URL_PARAMETER);
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+
+            connection.setSSLSocketFactory(SSLContextBuilder.loadSSLContext());
 
             if ("Basic".equals(AUTH_TYPE)) {
 
@@ -88,8 +79,10 @@ public class App {
             }
         } else if ("POST".equals(METHOD)) {
 
-            URL url = new URL(BASE_URL);
+            URL url = new URL(BASE_URL + ":" + PORT + URL_PARAMETER);
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+
+            connection.setSSLSocketFactory(SSLContextBuilder.loadSSLContext());
 
             if ("Basic".equals(AUTH_TYPE)) {
 
@@ -136,4 +129,5 @@ public class App {
             }
         }
     }
+
 }
