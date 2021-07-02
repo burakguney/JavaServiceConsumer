@@ -10,15 +10,12 @@ import java.util.Base64;
 
 public class App {
 
-    private static final String BASE_URL = "https://self-signed.badssl.com";
-    private static final String CERT_URL = "self-signed.badssl.com";
-
-    private static final int PORT = -1;
-    private static final String USERNAME = "";
-    private static final String PASSWORD = "";
+    private static final String BASE_URL = "https://localhost:8000/nbi/wdl/ata";
+    private static final String USERNAME = "evam";
+    private static final String PASSWORD = "evam";
     private static final String TOKEN = "";
     private static final String METHOD = "GET";
-    private static final String AUTH_TYPE = "";
+    private static final String AUTH_TYPE = "Basic";
 
     public static void main(String[] args) throws Exception {
 
@@ -29,8 +26,6 @@ public class App {
                 return true;
             }
         });
-
-        InstallCertBuilder.InstallCert(CERT_URL, PORT);
 
         if ("GET".equals(METHOD)) {
 
