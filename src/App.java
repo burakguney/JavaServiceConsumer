@@ -3,6 +3,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -17,7 +18,11 @@ public class App {
     private static final String METHOD = "GET";
     private static final String AUTH_TYPE = "Basic";
 
+    private static final String URL_PARAMETERS = "";
+
     public static void main(String[] args) throws Exception {
+
+        byte[] postData = URL_PARAMETERS.getBytes(StandardCharsets.UTF_8);
 
         String userPass = USERNAME + ":" + PASSWORD;
 
@@ -27,94 +32,58 @@ public class App {
             }
         });
 
-        if ("GET".equals(METHOD)) {
+        URL url = new URL(BASE_URL);
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
-            URL url = new URL(BASE_URL);
-            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+        connection.setSSLSocketFactory(SSLContextBuilder.loadSSLContext());
 
-            connection.setSSLSocketFactory(SSLContextBuilder.loadSSLContext());
+        if ("Basic".equals(AUTH_TYPE)) {
 
-            if ("Basic".equals(AUTH_TYPE)) {
+            String basicAuth = "Basic "
+                    + new String(Base64.getEncoder().encode(userPass.getBytes(StandardCharsets.UTF_8)));
+            connection.setRequestProperty("Authorization", basicAuth);
 
-                String basicAuth = "Basic "
-                        + new String(Base64.getEncoder().encode(userPass.getBytes(StandardCharsets.UTF_8)));
-                connection.setRequestProperty("Authorization", basicAuth);
+        } else if ("Bearer".equals(AUTH_TYPE)) {
 
-            } else if ("Bearer".equals(AUTH_TYPE)) {
+            String bearerAuth = "Bearer " + TOKEN;
+            connection.setRequestProperty("Authorization", bearerAuth);
 
-                String bearerAuth = "Bearer " + TOKEN;
-                connection.setRequestProperty("Authorization", bearerAuth);
+        }
 
-            }
+        connection.setDoOutput(true);
+        connection.setRequestMethod(METHOD);
 
-            connection.setRequestMethod(METHOD);
+        if ("POST".equals(METHOD)) {
 
-            int responseCode = connection.getResponseCode();
-            System.out.println("GET Response Code :: " + responseCode);
+            try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
 
-            if (responseCode == HttpsURLConnection.HTTP_OK) {
-
-                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String inputLine;
-                StringBuilder response = new StringBuilder();
-
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
-                }
-                in.close();
-
-                System.out.println(String.valueOf(response));
-
-                System.out.println("GET request SUCCESS");
-
-            } else {
-
-                System.out.println("GET request FAILED");
-            }
-        } else if ("POST".equals(METHOD)) {
-
-            URL url = new URL(BASE_URL);
-            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-
-            connection.setSSLSocketFactory(SSLContextBuilder.loadSSLContext());
-
-            if ("Basic".equals(AUTH_TYPE)) {
-
-                String basicAuth = "Basic "
-                        + new String(Base64.getEncoder().encode(userPass.getBytes(StandardCharsets.UTF_8)));
-                connection.setRequestProperty("Authorization", basicAuth);
-
-            } else if ("Bearer".equals(AUTH_TYPE)) {
-
-                String bearerAuth = "Bearer " + TOKEN;
-                connection.setRequestProperty("Authorization", bearerAuth);
+                wr.write(postData);
 
             }
 
-            connection.setRequestMethod(METHOD);
+        }
 
-            int responseCode = connection.getResponseCode();
-            System.out.println("POST Response Code :: " + responseCode);
+        int responseCode = connection.getResponseCode();
+        System.out.println(METHOD + " Response Code :: " + responseCode);
 
-            if (responseCode == HttpsURLConnection.HTTP_OK || responseCode == HttpsURLConnection.HTTP_CREATED) {
+        if (responseCode == HttpsURLConnection.HTTP_OK || responseCode == HttpsURLConnection.HTTP_CREATED) {
 
-                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String inputLine;
-                StringBuilder response = new StringBuilder();
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String inputLine;
+            StringBuilder response = new StringBuilder();
 
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
-                }
-                in.close();
-
-                System.out.println(String.valueOf(response));
-
-                System.out.println("POST request SUCCESS.");
-
-            } else {
-
-                System.out.println("POST request FAILED.");
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
             }
+            in.close();
+
+            System.out.println(String.valueOf(response));
+
+            System.out.println(METHOD + " request SUCCESS");
+
+        } else {
+
+            System.out.println(METHOD + " request FAILED");
         }
     }
 
