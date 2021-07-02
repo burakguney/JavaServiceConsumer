@@ -11,12 +11,12 @@ import java.util.Base64;
 
 public class App {
 
-    private static final String BASE_URL = "https://localhost:8000/nbi/wdl/ata";
-    private static final String USERNAME = "evam";
-    private static final String PASSWORD = "evam";
+    private static final String BASE_URL = "https://self-signed.badssl.com";
+    private static final String USERNAME = "";
+    private static final String PASSWORD = "";
     private static final String TOKEN = "";
     private static final String METHOD = "GET";
-    private static final String AUTH_TYPE = "Basic";
+    private static final String AUTH_TYPE = "";
 
     private static final String URL_PARAMETERS = "";
 
@@ -54,13 +54,9 @@ public class App {
         connection.setRequestMethod(METHOD);
 
         if ("POST".equals(METHOD)) {
-
             try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
-
                 wr.write(postData);
-
             }
-
         }
 
         int responseCode = connection.getResponseCode();
